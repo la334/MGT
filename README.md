@@ -50,7 +50,7 @@ ANSITerminal
 
 CONFIGURE INSTRUCTIONS
 ----------------------
-This project requires the camlp4o syntax.
+This project requires the camlp4o syntax and OCamlMake.
 
 RUN INSTRUCTIONS
 ----------------
