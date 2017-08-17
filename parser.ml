@@ -478,6 +478,7 @@ let feature_parse grammar str =
   (* let _ = writetrees "chart_parsed" res in *)
   let new_res = List.map (fun x -> impose_ft x grammar) res in
   let new_res = List.fold_left (fun acc x -> acc@x) [] new_res in
+  let new_res = List.sort_uniq compare new_res in
   (* let new_res = List.flatten res in *)
   (* let _ = writetrees "imposed_ft" new_res in *)
   let new_res = List.map trickle_ft new_res in

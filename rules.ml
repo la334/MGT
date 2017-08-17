@@ -211,13 +211,12 @@ let (german : rule list) = [
     only_entry "TV"]);
 
   ({no_ft with entry = "VP"; subordinate = UnifyBlock(Only No)},
-    [{person = UnifyBlock(Any);
+    [only_entry "TV"; {person = UnifyBlock(Any);
     	number = UnifyBlock(Any);
     	gender = UnifyBlock(Any);
     	subordinate = Unifier(No);
     	lex= ""; entry = "NP";
-    	case = UnifyBlock(Only Acc)};
-    only_entry "TV"]);
+    	case = UnifyBlock(Only Acc)};]);
 
   (only_entry "VP", [only_entry "CV"; only_entry "SubC"]);
 
@@ -277,33 +276,23 @@ let (german : rule list) = [
 
   (only_entry "IV",
     [{no_ft with entry = "gehen";
-    	number = Only Sing;
-    	person = Only Third;
     	lex="walk"}]);
 
   (only_entry "TV",
     [{no_ft with entry = "sehen";
-    	number = Unifier Sing;
-    	person = Unifier Third;
     	lex="see"}]);
 
 
   (only_entry "TV",
     [{no_ft with entry = "gehen";
-    	number = Unifier Sing;
-    	person = Unifier Third;
     	lex="walk"}]);
 
   (only_entry "CV",
     [{no_ft with entry = "sagen";
-	    number = Unifier Sing;
-	    person = Unifier Third;
 	    lex="say"}]);
 
   (only_entry "CV",
     [{no_ft with entry = "denken";
-    	number = Unifier Sing;
-    	person = Unifier Third;
     	lex="think"}]);
 
   (only_entry "C",

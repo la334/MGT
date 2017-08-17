@@ -121,16 +121,6 @@ let italian_to_italian str =
   let res = List.map Parser.to_string res in
   List.sort_uniq compare res
 
-let german_to_german str =
-  let res = feature_parse german str in
-  let res = List.map (fun x -> translate_to x german) res in
-  let res = List.map linearize res in
-  let res = List.sort_uniq compare (List.flatten (List.map to_string res)) in
-  let res = List.map (feature_parse german) res in
-  let res = List.flatten res in
-  let res = List.map Parser.to_string res in
-  List.sort_uniq compare res
-
 let english_to_italian str =
   let res = feature_parse english str in
   let res = List.sort_uniq compare res in
@@ -158,6 +148,18 @@ let only_not_sub lst =
       | Leaf(ft) -> not (Features.is_subordinate ft)
       | Branch(ft,lst) -> not (Features.is_subordinate ft))
     lst
+
+let german_to_german str =
+  let res = feature_parse german str in
+  let res = List.map (fun x -> translate_to x german) res in
+  let res = List.map german_movement res in
+  let res = List.map linearize res in
+  let res = List.sort_uniq compare (List.flatten (List.map to_string res)) in
+  let res = List.map (feature_parse german) res in
+  let res = List.flatten res in
+  let res = only_not_sub res in
+  let res = List.map Parser.to_string res in
+  List.sort_uniq compare res
 
 let english_to_german str =
   let res = feature_parse english str in
