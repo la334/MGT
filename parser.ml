@@ -39,6 +39,28 @@ module TripleSet = Set.Make(OrderedTriple)
 type chart = TripleSet.t array array
 exception StrangeChart
 
+let combine f1 f2 =
+  let new_e = String.concat "!" [Features.get_e f1; Features.get_e f2] in
+  Features.set_e (Features.no_ft) new_e
+
+(* [binarize_grammar g] is the binary form of the grammar [g]. *)
+
+let binarize_grammar g =
+
+  let rec binarize_rule r =
+    match r with
+    | (head,lst) when (List.length lst) <=2 -> [(head,lst)]
+    | (head,lst) ->
+        match lst with
+        | [] | [_] | [_;_] -> failwith "List longer than 2 elements"
+        | h1::h2::t ->
+            let comb = combine h1 h2 in
+            let new_rule = (comb,[h1;h2]) in
+            let other_rule = binarize_rule (head,comb::t) in
+            new_rule::other_rule in
+
+  List.fold_left (fun acc x -> acc@(binarize_rule x)) [] g
+
 (* [wordparser lang j words] assigns initial word classes as described by
  * grammar [lang] to the list of words [words] at point [j] in the chart. 
  * This function is equivalent to the line
@@ -116,8 +138,9 @@ let unary_rules grammar s =
       TripleSet.union acc new_set)
     s catlst
 
-let chart_parse grammar str =
-  try(let str = String.lowercase str in
+let chart_parse grammar str = try (
+  let grammar = binarize_grammar grammar in
+  let str = String.lowercase str in
   let lst = String.split_on_char ' ' str in
   let n = List.length lst in
   let chart = Array.make_matrix (n+1) (n+1) TripleSet.empty in
@@ -172,6 +195,31 @@ let rec make_tree ch (cat : string) (i,j) =
 
    List.map trees_of_entry rooted_in_cat
 
+
+(* [unbinarize_tree t] is the unbinarized version of the tree [t]. *)
+let rec unbinarize_tree t =
+  
+  let hasbang s = List.length (Str.split (Str.regexp "!+") s) > 1 in
+
+  let label t =
+    match t with
+    | Leaf(x) -> Features.get_e x
+    | Branch(x,lst) -> Features.get_e x in
+
+  match t with
+    | Leaf(x) -> t
+    | Branch(head,[Leaf(x)]) -> t
+    | Branch(head,h::t) ->
+        if (hasbang (label h)) then
+          match h with
+            | Leaf(_) -> unbinarize_tree (Branch(head,t))
+            | Branch(x,lst) ->  unbinarize_tree (Branch(head,lst@t))
+        else
+        let new_lst =
+          List.fold_left (fun acc x -> acc@[unbinarize_tree x]) [] (h::t) in
+          Branch(head,new_lst)  
+    | _ -> failwith "Shouldn't happen"
+
 (* [extract_fts t] is the feature bundle at the topmost node of tree [t]. *)
 let extract_fts t = 
   match t with
@@ -221,8 +269,8 @@ let rec impose_ft t (grammar:grammar) : tree list=
       | Leaf(x) -> []
       | Branch(x,lst) -> lst) in
 
-    let ruletrees = rules_to_tree grammar in (*THIS LINE IS FINE*)
-    let res = List.filter (*THIS IS THE PROBLEM*)
+    let ruletrees = rules_to_tree grammar in
+    let res = List.filter
       (fun x -> let f1 = extract_fts t in let f2 = extract_fts x in
         let ans1 = (Fs.equals_ft f1 f2) in let ans2 =
           (tree_to_categories t = tree_to_categories x) in
@@ -423,13 +471,45 @@ match t with
         List.fold_left (fun acc x -> acc && (no_clash x)) true lst in
       let head_clash = not (Fs.has_clash f) in
       branch_clash && head_clash
-(* 
+
+(* let to_string_ftval fv =
+  match fv with
+  | FV.First -> "1"
+  | FV.Second -> "2"
+  | FV.Third -> "3"
+  | FV.Sing -> "Sg"
+  | FV.Pl -> "Pl"
+  | FV.Masc -> "M"
+  | FV.Fem -> "F"
+  | FV.Nom -> "Nom"
+  | FV.Acc -> "Acc"
+  | FV.Yes -> "Yes"
+  | FV.No -> "No"
+  | _ -> ""
+
+let rec to_string_ft ft =
+  match ft with
+  | F.Any -> "Any"
+  | F.Clash -> "Clash"
+  | F.Only(s) -> "Only " ^ (to_string_ftval s)      
+  | F.Unifier(s) -> "Unifier " ^ (to_string_ftval s)      
+  | F.UnifyBlock(f) -> "UnifyBlock " ^ (to_string_ft f)
+
+let to_string_fts fts =
+  "P: " ^ (to_string_ft (Fs.get_p fts)) ^
+  "; N: " ^ (to_string_ft (Fs.get_n fts)) ^
+  "; G: " ^ (to_string_ft (Fs.get_g fts)) ^
+  "; C: " ^ (to_string_ft (Fs.get_c fts)) ^
+  "; S: " ^ (to_string_ft (Fs.get_s fts)) ^
+  "; E: " ^ (Fs.get_e fts) ^
+  "; L: " ^ (Fs.get_l fts)
+
 let dot_of_tree title t =
 
   let rec dot_of_node i =
     function
     | Leaf name -> 
-        (("n"^(string_of_int i)^" [label = \""^(Features.to_string name)^
+        (("n"^(string_of_int i)^" [label = \""^(to_string_fts name)^
           "\"];\n"),i)
     | Branch (parent,kids) ->
         let (rootbyindexlist,maximum) = List.fold_left (fun (sofar,index) kid ->
@@ -439,7 +519,7 @@ let dot_of_tree title t =
             ([],i)
             kids in
         let thisnode = ("n"^(string_of_int i)^" [label = \""^
-          (Features.to_string parent)^"\"];\n") in
+          (to_string_fts parent)^"\"];\n") in
         let downarrows = List.fold_left (fun already (subtree,index) ->
           ("n"^(string_of_int i)^"-> n"^(string_of_int index)^";\n"^already)
                         )
@@ -475,11 +555,13 @@ let feature_parse grammar str =
     List.sort_uniq compare
       ((List.map (fun x -> Fs.get_e (fst x))) grammar) in
   let res = List.fold_left (fun acc x -> acc @ (get_res x)) [] end_cats in
-  (* let _ = writetrees "chart_parsed" res in *)
+  (* let _ = writetrees "pre_tree" res in *)
+  let res = List.map unbinarize_tree res in
+  (* let _ = writetrees "tree" res in *)
   let new_res = List.map (fun x -> impose_ft x grammar) res in
   let new_res = List.fold_left (fun acc x -> acc@x) [] new_res in
+  (* let _ = writetrees "imposed" new_res in *)
   let new_res = List.sort_uniq compare new_res in
-  (* let new_res = List.flatten res in *)
   (* let _ = writetrees "imposed_ft" new_res in *)
   let new_res = List.map trickle_ft new_res in
   (* let _ = writetrees "trickled_ft" new_res in *)

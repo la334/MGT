@@ -21,16 +21,14 @@ let (english : rule list) = [
     	lex= ""; entry = "NP";
     	case = UnifyBlock(Only Acc)}]);
 
-  (only_entry "VP", [only_entry "CV"; only_entry "SubC"]);
-
-  only_entry "SubC",
-  	[only_entry "C";
-  	{person = UnifyBlock(Any);
+  (only_entry "VP", 
+    [only_entry "CV"; only_entry "C";
+    {person = UnifyBlock(Any);
       number = UnifyBlock(Any);
       gender = UnifyBlock(Any);
       case = UnifyBlock(Any);
       subordinate = Only(Yes);
-      entry = "S"; lex = ""}];
+      entry = "S"; lex = ""}]);
 
   (only_entry "NP",
     [{no_ft with entry = "John";
@@ -109,16 +107,14 @@ let (italian : rule list) = [
     	lex= ""; entry = "NP";
     	case = UnifyBlock(Only Acc)}]);
 
-  (only_entry "VP", [only_entry "CV"; only_entry "SubC"]);
-
-  only_entry "SubC",
-  	[only_entry "C";
-  	{person = UnifyBlock(Any);
+    (only_entry "VP", 
+    [only_entry "CV"; only_entry "C";
+    {person = UnifyBlock(Any);
       number = UnifyBlock(Any);
       gender = UnifyBlock(Any);
       case = UnifyBlock(Any);
       subordinate = Only(Yes);
-      entry = "S"; lex = ""}];
+      entry = "S"; lex = ""}]);
 
   (only_entry "NP",
     [{no_ft with entry = "Giovanni";
@@ -218,16 +214,14 @@ let (german : rule list) = [
     	lex= ""; entry = "NP";
     	case = UnifyBlock(Only Acc)};]);
 
-  (only_entry "VP", [only_entry "CV"; only_entry "SubC"]);
-
-  only_entry "SubC",
-    [only_entry "C";
+    (only_entry "VP", 
+    [only_entry "CV"; only_entry "C";
     {person = UnifyBlock(Any);
       number = UnifyBlock(Any);
       gender = UnifyBlock(Any);
       case = UnifyBlock(Any);
       subordinate = Only(Yes);
-      entry = "S"; lex = ""}];
+      entry = "S"; lex = ""}]);
 
   (only_entry "NP",
     [{no_ft with entry = "Johannes";

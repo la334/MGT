@@ -63,7 +63,7 @@ let detect_keywords s =
   let lst = Str.split (Str.regexp " +") s in
   if (List.length lst) >= 1 && (List.hd lst) = "words"
   	then raise (WordList (List.tl lst))
-  else if s = "exit" or s = "quit" or s = "end" then raise QuittingEarly
+  else if s = "exit" || s = "quit" || s = "end" then raise QuittingEarly
   else if s = "restart" then raise Restart
   else if s = "help" then raise Help
   else if s = "history" then raise History
