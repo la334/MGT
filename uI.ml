@@ -3,10 +3,8 @@
  * function smoothly by formatting output and providing solutions to incorrect
  * inputs. *)
 
-open Batteries
 open Grammar
 open Database
-open Parser
 open Translator
 open ANSITerminal
 

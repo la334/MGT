@@ -2,9 +2,8 @@
  * This file contains the code necessary to run the MGT according to various
  * user inputs. *)
 
-open Grammar
-open Database
 open ANSITerminal
+open Database
 open UI
 
 (* [keyword_handler k f s] decides the appropriate response to exception [k]

@@ -9,10 +9,9 @@ Makefile - allows for the following targets: make, make run, make clean
 
 _tags - a file containing tags for ocamlbuild to ensure compilation
 
-MGT_writeup.pdf - the writeup of the initial implementation and vision for the
-MGT
+MGT_writeup.pdf - the technical writeup describing the MGT
 
-main.ml - the access pooint of this project from outside of the various modules
+mgt.ml - the access pooint of this project from outside of the various modules
 
 uI.ml, uI.mli - compile into uI.cmo, handles the user-interface
 

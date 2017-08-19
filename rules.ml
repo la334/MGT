@@ -1,14 +1,54 @@
-let (english : rule list) = [
+let common_rules = [
 
   ({person = UnifyBlock(Any);
-  		number = UnifyBlock(Any);
-	  	gender = UnifyBlock(Any);
-	  	case = UnifyBlock(Any);
-	  	subordinate = UnifyBlock(Any);
-	  	entry = "S"; lex = ""},
+      number = UnifyBlock(Any);
+      gender = UnifyBlock(Any);
+      case = UnifyBlock(Any);
+      subordinate = UnifyBlock(Any);
+      entry = "S"; lex = ""},
     [{no_ft with entry = "NP"; case = Only Nom}; only_entry "VP"]);
 
+    (only_entry "VP",
+    [only_entry "VP";
+      only_entry "Conj";
+      only_entry "VP"]);
+
+    ({person = UnifyBlock(Any);
+      number = UnifyBlock(Any);
+      gender = UnifyBlock(Any);
+      case = UnifyBlock(Any);
+      subordinate = UnifyBlock(Any);
+      entry = "S"; lex = ""},
+    [{person = UnifyBlock(Any);
+      number = UnifyBlock(Any);
+      gender = UnifyBlock(Any);
+      case = UnifyBlock(Any);
+      subordinate = Any;
+      entry = "S"; lex = ""};
+      {
+      no_ft with entry = "Conj"      
+      };
+      {person = UnifyBlock(Any);
+      number = UnifyBlock(Any);
+      gender = UnifyBlock(Any);
+      case = UnifyBlock(Any);
+      subordinate = Any;
+      entry = "S"; lex = ""}]);
+
   (only_entry "NP", [only_entry "Det"; only_entry "N"]);
+
+  (only_entry "VP", 
+    [only_entry "CV"; only_entry "C";
+    {person = UnifyBlock(Any);
+      number = UnifyBlock(Any);
+      gender = UnifyBlock(Any);
+      case = UnifyBlock(Any);
+      subordinate = Only(Yes);
+      entry = "S"; lex = ""}]);
+
+]
+
+let (english : rule list) = common_rules @ [
 
   (only_entry "VP", [only_entry "IV"]);
 
@@ -81,23 +121,19 @@ let (english : rule list) = [
     	lex="think"}]);
 
   (only_entry "C",
-    [{no_ft with entry = "that";lex="that"}])
+    [{no_ft with entry = "that";lex="that"}]);
+
+  (only_entry "Conj",
+    [{no_ft with entry = "and";lex="and"}]);
+
+    (only_entry "Conj",
+    [{no_ft with entry = "or";lex="or"}])
 ]
 
-let (italian : rule list) = [
-
-  ({person = UnifyBlock(Any);
-  		number = UnifyBlock(Any);
-	  	gender = UnifyBlock(Any);
-	  	case = UnifyBlock(Any);
-	  	subordinate = UnifyBlock(Any);
-	  	entry = "S"; lex = ""},
-    [{no_ft with entry = "NP"; case = Only Nom}; only_entry "VP"]);
-
-  (only_entry "NP", [only_entry "Det"; only_entry "N"]);
+let (italian : rule list) = common_rules @ [
 
   (only_entry "VP", [only_entry "IV"]);
-
+  
   (only_entry "VP",
     [only_entry "TV";
     {person = UnifyBlock(Any);
@@ -180,20 +216,16 @@ let (italian : rule list) = [
     	lex="think"}]);
 
   (only_entry "C",
-    [{no_ft with entry = "che";lex="that"}])
+    [{no_ft with entry = "che";lex="that"}]);
+
+  (only_entry "Conj",
+    [{no_ft with entry = "e";lex="and"}]);
+
+  (only_entry "Conj",
+    [{no_ft with entry = "o";lex="or"}])
 ]
 
-let (german : rule list) = [
-
-  ({person = UnifyBlock(Any);
-  		number = UnifyBlock(Any);
-	  	gender = UnifyBlock(Any);
-	  	case = UnifyBlock(Any);
-	  	subordinate = UnifyBlock(Any);
-	  	entry = "S"; lex = ""},
-    [{no_ft with entry = "NP"; case = Only Nom}; only_entry "VP"]);
-
-  (only_entry "NP", [only_entry "Det"; only_entry "N"]);
+let (german : rule list) = common_rules @ [
 
   ({no_ft with entry = "VP"; subordinate = UnifyBlock(Any)}, [only_entry "IV"]);
 
@@ -213,15 +245,6 @@ let (german : rule list) = [
     	subordinate = Unifier(No);
     	lex= ""; entry = "NP";
     	case = UnifyBlock(Only Acc)};]);
-
-    (only_entry "VP", 
-    [only_entry "CV"; only_entry "C";
-    {person = UnifyBlock(Any);
-      number = UnifyBlock(Any);
-      gender = UnifyBlock(Any);
-      case = UnifyBlock(Any);
-      subordinate = Only(Yes);
-      entry = "S"; lex = ""}]);
 
   (only_entry "NP",
     [{no_ft with entry = "Johannes";
@@ -290,5 +313,11 @@ let (german : rule list) = [
     	lex="think"}]);
 
   (only_entry "C",
-    [{no_ft with entry = "dass";lex="that"}])
+    [{no_ft with entry = "dass";lex="that"}]);
+
+  (only_entry "Conj",
+    [{no_ft with entry = "und";lex="and"}]);
+
+  (only_entry "Conj",
+    [{no_ft with entry = "oder";lex="or"}])
 ]

@@ -107,9 +107,7 @@ let english_to_english str =
   let res = List.map linearize res in
   let res = List.sort_uniq compare (List.flatten (List.map to_string res)) in
   let res = List.map (feature_parse english) res in
-  let res = List.flatten res in
-  let res = List.map Parser.to_string res in
-  List.sort_uniq compare res
+  List.sort_uniq compare (List.map Parser.to_string (List.flatten res))
 
 let italian_to_italian str =
   let res = feature_parse italian str in
@@ -117,9 +115,7 @@ let italian_to_italian str =
   let res = List.map linearize res in
   let res = List.sort_uniq compare (List.flatten (List.map to_string res)) in
   let res = List.map (feature_parse italian) res in
-  let res = List.flatten res in
-  let res = List.map Parser.to_string res in
-  List.sort_uniq compare res
+  List.sort_uniq compare (List.map Parser.to_string (List.flatten res))
 
 let english_to_italian str =
   let res = feature_parse english str in
@@ -128,9 +124,7 @@ let english_to_italian str =
   let res = List.map linearize res in
   let res = List.sort_uniq compare (List.flatten (List.map to_string res)) in
   let res = List.map (feature_parse italian) res in
-  let res = List.flatten res in
-  let res = List.map Parser.to_string res in
-  List.sort_uniq compare res
+  List.sort_uniq compare (List.map Parser.to_string (List.flatten res))
 
 let italian_to_english str =
   let res = feature_parse italian str in
@@ -138,9 +132,7 @@ let italian_to_english str =
   let res = List.map linearize res in
   let res = List.sort_uniq compare (List.flatten (List.map to_string res)) in
   let res = List.map (feature_parse english) res in
-  let res = List.flatten res in
-  let res = List.map Parser.to_string res in
-  List.sort_uniq compare res
+  List.sort_uniq compare (List.map Parser.to_string (List.flatten res))
 
 let only_not_sub lst =
   List.filter
@@ -156,10 +148,8 @@ let german_to_german str =
   let res = List.map linearize res in
   let res = List.sort_uniq compare (List.flatten (List.map to_string res)) in
   let res = List.map (feature_parse german) res in
-  let res = List.flatten res in
-  let res = only_not_sub res in
-  let res = List.map Parser.to_string res in
-  List.sort_uniq compare res
+  List.sort_uniq compare
+    (List.map Parser.to_string (only_not_sub (List.flatten res)))
 
 let english_to_german str =
   let res = feature_parse english str in
@@ -168,10 +158,8 @@ let english_to_german str =
   let res = List.map linearize res in
   let res = List.sort_uniq compare (List.flatten (List.map to_string res)) in
   let res = List.map (feature_parse german) res in
-  let res = List.flatten res in
-  let res = only_not_sub res in
-  let res = List.map Parser.to_string res in
-  List.sort_uniq compare res
+  List.sort_uniq compare
+    (List.map Parser.to_string (only_not_sub (List.flatten res)))
 
 let italian_to_german str =
   let res = feature_parse italian str in
@@ -180,10 +168,8 @@ let italian_to_german str =
   let res = List.map linearize res in
   let res = List.sort_uniq compare (List.flatten (List.map to_string res)) in
   let res = List.map (feature_parse german) res in
-  let res = List.flatten res in
-  let res = only_not_sub res in
-  let res = List.map Parser.to_string res in
-  List.sort_uniq compare res
+  List.sort_uniq compare
+    (List.map Parser.to_string (only_not_sub (List.flatten res)))
 
 let german_to_english str =
   let res = feature_parse german str in
@@ -193,10 +179,8 @@ let german_to_english str =
   let res = List.map linearize res in
   let res = List.sort_uniq compare (List.flatten (List.map to_string res)) in
   let res = List.map (feature_parse english) res in
-  let res = List.flatten res in
-  let res = List.map Parser.to_string res in
-  List.sort_uniq compare res
- 
+  List.sort_uniq compare (List.map Parser.to_string (List.flatten res))
+
 let german_to_italian str =
   let res = feature_parse german str in
   let res = only_not_sub res in
@@ -205,7 +189,4 @@ let german_to_italian str =
   let res = List.map linearize res in
   let res = List.sort_uniq compare (List.flatten (List.map to_string res)) in
   let res = List.map (feature_parse italian) res in
-  let res = List.flatten res in
-  let res = List.map Parser.to_string res in
-  List.sort_uniq compare res
-
+  List.sort_uniq compare (List.map Parser.to_string (List.flatten res))
